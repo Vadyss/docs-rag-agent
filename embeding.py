@@ -1,7 +1,15 @@
+import os
 import requests
 from langchain_core.documents import Document
 from langchain_core.vectorstores import InMemoryVectorStore
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from dotenv import load_dotenv
+from langchain_openai import OpenAIEmbeddings
+from langchain_core.vectorstores import InMemoryVectorStore
+
+load_dotenv()
+
+OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
 
 DOCS_BASE = "https://docs.langchain.com"
 
@@ -52,15 +60,8 @@ text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=20
 all_splits = text_splitter.split_documents(docs)
 print(f"Split documentation into {len(all_splits)} chunks.")
 
-import os
-from dotenv import load_dotenv
-from langchain_openai import OpenAIEmbeddings
-from langchain_core.vectorstores import InMemoryVectorStore
 
-load_dotenv()
-
-OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
-
+# Embedding all files into memory vector store
 embeddings = OpenAIEmbeddings(model="text-embedding-3-large")
 vector_store = InMemoryVectorStore(embeddings)
 vector_store.add_documents(documents=all_splits)
